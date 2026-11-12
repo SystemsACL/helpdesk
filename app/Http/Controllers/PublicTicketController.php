@@ -20,7 +20,7 @@ class PublicTicketController extends Controller
     public function store(Request $request, TicketService $tickets, WhatsAppLinkBuilder $wa)
     {
         // Honeypot: un humano nunca llena este campo.
-        if ($request->filled('website')) {
+        if ($request->filled('hp_field')) {
             return redirect()->route('solicitud.create');
         }
 
