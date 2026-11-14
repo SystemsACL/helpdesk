@@ -18,6 +18,7 @@
   /* Sistema */
   --ink:#222943; --muted:#6B7280; --bg:#F8F8F8; --card:#fff; --field:#F8F8F8;
   --line:#E5E8EC; --gray:#CED0D4; --err:#D64545; --ok:#2E9E6B;
+  --nav:54px;
   --ring:0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 *{box-sizing:border-box}
@@ -28,6 +29,8 @@ body{margin:0;color:var(--ink);
   -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
 body.has-dock{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+body.has-nav{padding-bottom:calc(var(--nav) + 16px + env(safe-area-inset-bottom))}
+body.has-nav.has-dock{padding-bottom:calc(var(--nav) + 84px + env(safe-area-inset-bottom))}
 
 /* Encabezado compacto */
 .hd{max-width:560px;margin:0 auto;padding:12px 16px 4px;display:flex;align-items:center;gap:10px}
@@ -123,9 +126,12 @@ input[type=checkbox]:checked::after{transform:translateX(17px)}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);
   padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .dock .btn{max-width:528px;margin:0 auto}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-.nav a{flex:1;text-align:center;padding:11px 4px;text-decoration:none;color:var(--muted);font-size:12.5px;font-weight:600}
+.dock.on-nav{bottom:calc(var(--nav) + env(safe-area-inset-bottom));padding-bottom:10px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:11;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:var(--nav);text-decoration:none;color:var(--muted);font-size:11.5px;font-weight:600}
+.nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nav a.on{color:var(--ink);box-shadow:inset 0 2px 0 var(--primary)}
+.nav a.on svg{stroke:var(--primary)}
 
 /* Listas y detalle */
 details.filters{margin:8px 0}
@@ -145,10 +151,33 @@ ul.hist small{display:block;color:var(--muted)}
 .foot{max-width:560px;margin:0 auto;padding:4px 16px 20px;text-align:center;font-size:12px;color:var(--muted)}
 .foot a{color:var(--primary);font-weight:600;text-decoration:none}
 
+/* Utilidades del panel */
+input[type=search]{-webkit-appearance:none;appearance:none}
+input[type=color]{padding:3px;cursor:pointer}
+textarea.sm{min-height:72px}
+.row2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.row2 input,.row2 select{margin:0}
+.row2 .btn{width:auto;margin:0;padding:11px 18px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cols3 label{margin:0}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.toprow h2{margin:18px 0 8px}
+.lnk{font-size:13px;font-weight:600;text-decoration:none}
+.folio-sm{font-size:18px;font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin:12px 0 0}
+.kv dd{margin:0}
+.kv .full{grid-column:1/-1}
+.card>h2:first-child{margin-top:0}
+.sum{cursor:pointer;font-weight:700;font-size:14px;list-style:none}
+.sum::-webkit-details-marker{display:none}
+.sum::after{content:"\203A";float:right;color:var(--muted);transition:transform .15s}
+details[open]>.sum::after{transform:rotate(90deg)}
+details.card[open]>.sum{margin-bottom:8px}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
-<body class="@hasSection('dock')has-dock @endif">
+<body class="@hasSection('dock')has-dock @endif @hasSection('nav')has-nav @endif">
 <header class="hd">
   @if($c->logo_path)<img src="{{ asset('storage/'.$c->logo_path) }}" alt="">@else<span class="logo">{{ mb_strtoupper(mb_substr($c->company_name, 0, 1)) }}</span>@endif
   <div><b>{{ $c->company_name }}</b><small>Support Desk</small></div>
@@ -160,7 +189,7 @@ ul.hist small{display:block;color:var(--muted)}
 @hasSection('public')
 <footer class="foot"><a href="{{ url('/login') }}">Acceso</a> · Powered by <a href="https://www.aclsys.net" target="_blank" rel="noopener noreferrer">ACLSYS</a></footer>
 @endif
-@hasSection('dock')<div class="dock">@yield('dock')</div>@endif
+@hasSection('dock')<div class="dock @hasSection('nav')on-nav @endif">@yield('dock')</div>@endif
 @yield('nav')
 </body>
 </html>

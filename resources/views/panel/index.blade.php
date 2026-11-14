@@ -1,12 +1,16 @@
 @extends('layouts.app')
 @section('title', 'Tickets')
 @section('content')
+@php($nf = collect(['status', 'category_id', 'range'])->filter(fn ($k) => request()->filled($k))->count())
 <h1>Tickets</h1>
 
 <form method="GET" class="card">
-  <input type="search" name="q" value="{{ request('q') }}" placeholder="Folio, nombre o WhatsApp">
-  <details class="filters" @if(request()->hasAny(['status', 'category_id', 'range'])) open @endif>
-    <summary>Filtros</summary>
+  <div class="row2">
+    <input type="search" name="q" value="{{ request('q') }}" placeholder="Folio, nombre o WhatsApp" enterkeyhint="search">
+    <button class="btn" type="submit">Buscar</button>
+  </div>
+  <details class="filters" @if($nf) open @endif>
+    <summary>Filtros @if($nf)({{ $nf }})@endif</summary>
     <label>Estado
       <select name="status">
         <option value="">Todos</option>
@@ -35,9 +39,9 @@
         @endforeach
       </select>
     </label>
+    <button class="btn btn-soft" type="submit">Aplicar filtros</button>
+    <a class="btn btn-text" href="{{ route('tickets.index') }}">Limpiar</a>
   </details>
-  <button class="btn" type="submit">Buscar</button>
-  <a class="btn btn-light" href="{{ route('tickets.index') }}">Limpiar</a>
 </form>
 
 @forelse($tickets as $t)

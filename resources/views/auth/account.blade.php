@@ -8,7 +8,7 @@
   <div class="alert">Por seguridad, cambia tu contraseña para continuar.</div>
 @endif
 
-<form method="POST" action="{{ route('password.update') }}" class="card">
+<form id="pw" method="POST" action="{{ route('password.update') }}" class="card">
   @csrf
   <label>Contraseña actual
     <input type="password" name="current_password" autocomplete="current-password" required>
@@ -18,10 +18,9 @@
     <input type="password" name="password" autocomplete="new-password" required>
     @error('password')<span class="err">{{ $message }}</span>@enderror
   </label>
-  <label>Repite la nueva
+  <label style="margin-bottom:0">Repite la nueva
     <input type="password" name="password_confirmation" autocomplete="new-password" required>
   </label>
-  <button class="btn" type="submit">Cambiar contraseña</button>
 </form>
 
 <form method="POST" action="{{ route('logout') }}">
@@ -29,4 +28,5 @@
   <button class="btn btn-light" type="submit">Cerrar sesión</button>
 </form>
 @endsection
+@section('dock')<button class="btn" type="submit" form="pw">Cambiar contraseña</button>@endsection
 @section('nav')@include('panel._nav')@endsection

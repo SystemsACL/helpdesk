@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Inicio')
 @section('content')
-<h1>Hola, {{ auth()->user()->name }}</h1>
+<h1>Hola, {{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}</h1>
 <p class="muted">Resumen de solicitudes</p>
 
 <div class="grid">
@@ -11,7 +11,10 @@
   <a class="stat" href="{{ route('tickets.index') }}"><b>{{ $stats['total'] }}</b><span>Total</span></a>
 </div>
 
-<h2>Recientes</h2>
+<div class="toprow">
+  <h2>Recientes</h2>
+  <a class="lnk" href="{{ route('tickets.index') }}">Ver todos</a>
+</div>
 @forelse($recent as $t)
   @include('panel._card', ['t' => $t])
 @empty

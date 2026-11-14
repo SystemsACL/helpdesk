@@ -16,9 +16,8 @@
     @endunless
   </div>
 @endforeach
-
-@unless($users->contains(fn ($u) => ! $u->isAdmin()))
-  <a class="btn" href="{{ route('users.create') }}">Crear agente</a>
-@endunless
 @endsection
+@unless($users->contains(fn ($u) => ! $u->isAdmin()))
+@section('dock')<a class="btn" href="{{ route('users.create') }}">Crear agente</a>@endsection
+@endunless
 @section('nav')@include('panel._nav')@endsection

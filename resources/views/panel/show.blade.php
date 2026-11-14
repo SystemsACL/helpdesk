@@ -5,25 +5,26 @@
 <p class="muted"><a href="{{ route('tickets.index') }}">← Tickets</a></p>
 
 <div class="card">
-  <div class="folio">{{ $ticket->ticket_number }}</div>
-  <p style="text-align:center;margin:0 0 14px"><span class="badge b-{{ $ticket->status->value }}">{{ $ticket->status->label() }}</span></p>
-  <dl>
-    <dt>Solicitante</dt><dd>{{ $ticket->requester_name }}</dd>
-    <dt>WhatsApp</dt><dd>{{ $ticket->requester_whatsapp }}</dd>
-    <dt>Servicio</dt><dd>{{ $ticket->category->name }}</dd>
-    <dt>Problema</dt><dd>{{ $ticket->description }}</dd>
-    <dt>Apertura</dt><dd>{{ $ticket->opened_at->timezone($tz)->format('d/m/Y H:i') }}</dd>
-    <dt>Asignado a</dt><dd>{{ $ticket->assignee?->name ?? 'Sin asignar' }}</dd>
+  <div class="toprow">
+    <div class="folio-sm">{{ $ticket->ticket_number }}</div>
+    <span class="badge b-{{ $ticket->status->value }}">{{ $ticket->status->label() }}</span>
+  </div>
+  <dl class="kv">
+    <div><dt>Solicitante</dt><dd>{{ $ticket->requester_name }}</dd></div>
+    <div><dt>WhatsApp</dt><dd>{{ $ticket->requester_whatsapp }}</dd></div>
+    <div><dt>Servicio</dt><dd>{{ $ticket->category->name }}</dd></div>
+    <div><dt>Asignado a</dt><dd>{{ $ticket->assignee?->name ?? 'Sin asignar' }}</dd></div>
+    <div><dt>Apertura</dt><dd>{{ $ticket->opened_at->timezone($tz)->format('d/m/Y H:i') }}</dd></div>
     @if($ticket->closed_at)
-      <dt>Cierre</dt><dd>{{ $ticket->closed_at->timezone($tz)->format('d/m/Y H:i') }}</dd>
+      <div><dt>Cierre</dt><dd>{{ $ticket->closed_at->timezone($tz)->format('d/m/Y H:i') }}</dd></div>
     @endif
+    <div class="full"><dt>Problema</dt><dd>{{ $ticket->description }}</dd></div>
     @if($ticket->resolution)
-      <dt>Resolución</dt><dd>{{ $ticket->resolution }}</dd>
+      <div class="full"><dt>Resolución</dt><dd>{{ $ticket->resolution }}</dd></div>
     @endif
   </dl>
-  <a class="btn btn-wa" href="{{ $waStatus }}" target="_blank" rel="noopener">Avisar estado por WhatsApp</a>
   @if($ticket->status === \App\Enums\TicketStatus::Closed)
-    <a class="btn btn-wa" href="{{ $waClosed }}" target="_blank" rel="noopener">Avisar cierre por WhatsApp</a>
+    <a class="btn btn-light" style="margin:14px 0 0" href="{{ $waStatus }}" target="_blank" rel="noopener">Avisar estado por WhatsApp</a>
   @endif
 </div>
 
@@ -38,24 +39,24 @@
     </select>
   </label>
   <label>Resolución (obligatoria para cerrar)
-    <textarea name="resolution" maxlength="2000">{{ old('resolution', $ticket->resolution) }}</textarea>
+    <textarea class="sm" name="resolution" maxlength="2000">{{ old('resolution', $ticket->resolution) }}</textarea>
     @error('resolution')<span class="err">{{ $message }}</span>@enderror
   </label>
-  <button class="btn" type="submit">Actualizar estado</button>
+  <button class="btn" style="margin:0" type="submit">Actualizar estado</button>
 </form>
 
 <h2>Asignación</h2>
 <form method="POST" action="{{ route('tickets.assign', $ticket) }}" class="card">
   @csrf
-  <label>Atiende
-    <select name="assigned_user_id">
+  <div class="row2">
+    <select name="assigned_user_id" aria-label="Atiende">
       <option value="">Sin asignar</option>
       @foreach($users as $u)
         <option value="{{ $u->id }}" @selected($ticket->assigned_user_id === $u->id)>{{ $u->name }}</option>
       @endforeach
     </select>
-  </label>
-  <button class="btn btn-light" type="submit">Asignar</button>
+    <button class="btn btn-light" type="submit">Asignar</button>
+  </div>
 </form>
 
 <h2>Comentarios internos</h2>
@@ -67,16 +68,16 @@
   @endforelse
   <form method="POST" action="{{ route('tickets.comment', $ticket) }}" style="margin-top:12px">
     @csrf
-    <label>Nuevo comentario
-      <textarea name="comment" maxlength="1000" required></textarea>
+    <label style="margin-bottom:10px">Nuevo comentario
+      <textarea class="sm" name="comment" maxlength="1000" required></textarea>
       @error('comment')<span class="err">{{ $message }}</span>@enderror
     </label>
-    <button class="btn btn-light" type="submit">Agregar comentario</button>
+    <button class="btn btn-light" style="margin:0" type="submit">Agregar comentario</button>
   </form>
 </div>
 
-<h2>Historial</h2>
-<div class="card">
+<details class="card">
+  <summary class="sum">Historial ({{ $ticket->events->count() }})</summary>
   <ul class="hist">
     @foreach($ticket->events as $e)
       <li>
@@ -94,6 +95,13 @@
       </li>
     @endforeach
   </ul>
-</div>
+</details>
+@endsection
+@section('dock')
+  @if($ticket->status === \App\Enums\TicketStatus::Closed)
+    <a class="btn btn-wa" href="{{ $waClosed }}" target="_blank" rel="noopener">Avisar cierre por WhatsApp</a>
+  @else
+    <a class="btn btn-wa" href="{{ $waStatus }}" target="_blank" rel="noopener">Avisar estado por WhatsApp</a>
+  @endif
 @endsection
 @section('nav')@include('panel._nav')@endsection
