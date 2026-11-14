@@ -3,6 +3,7 @@
 @section('content')
 @php($tz = \App\Models\CompanySetting::tz())
 <p class="muted"><a href="{{ route('tickets.index') }}">← Tickets</a></p>
+@error('assign')<div class="alert">{{ $message }}</div>@enderror
 
 <div class="card">
   <div class="toprow">
@@ -28,6 +29,24 @@
   @endif
 </div>
 
+@unless(auth()->user()->isAdmin())
+  @if(! $ticket->assigned_user_id)
+    <form method="POST" action="{{ route('tickets.assign', $ticket) }}">
+      @csrf
+      <input type="hidden" name="assigned_user_id" value="{{ auth()->id() }}">
+      <button class="btn" type="submit">Tomar este ticket</button>
+    </form>
+  @elseif($ticket->assigned_user_id === auth()->id())
+    <form method="POST" action="{{ route('tickets.assign', $ticket) }}">
+      @csrf
+      <input type="hidden" name="assigned_user_id" value="">
+      <button class="btn btn-light" type="submit">Soltar ticket</button>
+    </form>
+  @else
+    <p class="note" style="margin:0 0 12px">Lo atiende {{ $ticket->assignee?->name }}.</p>
+  @endif
+@endunless
+
 <h2>Estado</h2>
 <form method="POST" action="{{ route('tickets.status', $ticket) }}" class="card">
   @csrf
@@ -45,6 +64,7 @@
   <button class="btn" style="margin:0" type="submit">Actualizar estado</button>
 </form>
 
+@if(auth()->user()->isAdmin())
 <h2>Asignación</h2>
 <form method="POST" action="{{ route('tickets.assign', $ticket) }}" class="card">
   @csrf
@@ -58,6 +78,7 @@
     <button class="btn btn-light" type="submit">Asignar</button>
   </div>
 </form>
+@endif
 
 <h2>Comentarios internos</h2>
 <div class="card">

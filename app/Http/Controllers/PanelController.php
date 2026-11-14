@@ -100,9 +100,24 @@ class PanelController extends Controller
             'assigned_user_id' => ['nullable', Rule::exists('users', 'id')->where('is_active', true)],
         ]);
         $assignee = $data['assigned_user_id'] ? User::find($data['assigned_user_id']) : null;
+        $me = $request->user();
 
-        $svc->assign($ticket, $assignee, $request->user());
-        return back()->with('ok', 'Asignación actualizada.');
+        // El admin asigna a quien quiera. El agente solo puede tomar un ticket
+        // libre para sí mismo o soltar uno que ya es suyo.
+        if (! $me->isAdmin()) {
+            $takingFree = $ticket->assigned_user_id === null && $assignee?->id === $me->id;
+            $releasingOwn = $ticket->assigned_user_id === $me->id && $assignee === null;
+            if (! $takingFree && ! $releasingOwn) {
+                return back()->withErrors(['assign' => 'Este ticket ya lo atiende otra persona.']);
+            }
+        }
+
+        $svc->assign($ticket, $assignee, $me);
+
+        $msg = $assignee === null
+            ? 'Ticket liberado.'
+            : ($assignee->id === $me->id ? 'Ticket asignado a ti.' : 'Asignación actualizada.');
+        return back()->with('ok', $msg);
     }
 
     public function comment(Request $request, Ticket $ticket, TicketService $svc)
