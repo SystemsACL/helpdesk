@@ -37,7 +37,8 @@ class PanelController extends Controller
             $digits = preg_replace('/\D/', '', $s);
             $q->where(function ($w) use ($s, $digits) {
                 $w->where('ticket_number', 'ilike', "%{$s}%")
-                  ->orWhere('requester_name', 'ilike', "%{$s}%");
+                  ->orWhere('requester_name', 'ilike', "%{$s}%")
+                  ->orWhere('department', 'ilike', "%{$s}%");
                 if ($digits !== '') {
                     $w->orWhere('requester_whatsapp', 'like', "%{$digits}%");
                 }

@@ -8,7 +8,7 @@ use App\Models\Ticket;
 class WhatsAppLinkBuilder
 {
     private const DEFAULTS = [
-        'new' => "Hola, soy {nombre}.\nRegistré una solicitud de soporte.\nFolio: {folio}\nServicio: {categoria}\nProblema: {descripcion}\nAbrir ticket: {enlace}",
+        'new' => "Hola, soy {nombre}.\nRegistré una solicitud de soporte.\nFolio: {folio}\nDepto: {depto}\nServicio: {categoria}\nProblema: {descripcion}\nAbrir ticket: {enlace}",
         'status' => "Hola {nombre}, tu solicitud {folio} cambió de estado: {estado}.",
         'closed' => "Hola {nombre}, tu solicitud {folio} fue cerrada. Gracias por tu paciencia.",
     ];
@@ -34,6 +34,7 @@ class WhatsAppLinkBuilder
             '{nombre}' => $t->requester_name,
             '{folio}' => $t->ticket_number,
             '{categoria}' => $t->category?->name ?? '',
+            '{depto}' => $t->department ?? '',
             '{estado}' => $t->status->label(),
             '{descripcion}' => str($t->description)->limit(300)->toString(),
             '{enlace}' => $this->ticketUrl($t),

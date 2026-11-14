@@ -32,11 +32,14 @@ class PublicTicketController extends Controller
                     $fail('Escribe un número de WhatsApp válido (10 dígitos).');
                 }
             }],
+            'department' => ['required', 'string', 'max:80'],
             'category_id' => ['required', Rule::exists('service_categories', 'id')->where('is_active', true)],
             'description' => ['required', 'string', 'min:10', 'max:1000'],
         ], [
             'requester_name.required' => 'Escribe tu nombre.',
             'requester_whatsapp.required' => 'Escribe tu número de WhatsApp.',
+            'department.required' => 'Escribe tu departamento.',
+            'department.max' => 'Máximo 80 caracteres.',
             'category_id.required' => 'Elige el tipo de servicio.',
             'category_id.exists' => 'Elige un tipo de servicio válido.',
             'description.required' => 'Describe el problema.',

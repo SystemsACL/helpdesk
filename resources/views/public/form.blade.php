@@ -28,6 +28,12 @@
       <span class="fe">@error('requester_whatsapp'){{ $message }}@enderror</span>
     </div>
 
+    <div class="field @error('department') bad @enderror" data-f="dp">
+      <label for="dp">Departamento</label>
+      <input id="dp" name="department" value="{{ old('department') }}" maxlength="80" autocomplete="off" placeholder="Ej. Contabilidad" required>
+      <span class="fe">@error('department'){{ $message }}@enderror</span>
+    </div>
+
     <div class="field @error('category_id') bad @enderror" data-f="s">
       <label for="s">Tipo de servicio</label>
       <select id="s" name="category_id" required>
@@ -58,10 +64,11 @@ document.addEventListener('DOMContentLoaded',function(){
   var R={
     n:function(v){return v.trim().length>=2},
     w:function(v){return v.replace(/\D/g,'').length===10},
+    dp:function(v){return v.trim().length>=2},
     s:function(v){return !!v},
     d:function(v){return v.trim().length>=10}
   };
-  var M={n:'Escribe tu nombre.',w:'Necesitamos 10 dígitos para avisarte.',s:'Elige con qué necesitas ayuda.',d:'Cuéntanos un poco más (mínimo 10 caracteres).'};
+  var M={n:'Escribe tu nombre.',w:'Necesitamos 10 dígitos para avisarte.',dp:'Escribe tu departamento.',s:'Elige con qué necesitas ayuda.',d:'Cuéntanos un poco más (mínimo 10 caracteres).'};
   var K=Object.keys(R);
   var val=function(k){return $('#'+k).value};
   var field=function(k){return $('[data-f="'+k+'"]')};

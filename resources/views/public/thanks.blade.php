@@ -12,6 +12,7 @@
   <div class="folio">{{ $ticket->ticket_number }}</div>
   <dl>
     <dt>Nombre</dt><dd>{{ $ticket->requester_name }}</dd>
+    <dt>Departamento</dt><dd>{{ $ticket->department }}</dd>
     <dt>Servicio</dt><dd>{{ $ticket->category->name }}</dd>
     <dt>Problema</dt><dd>{{ $ticket->description }}</dd>
   </dl>

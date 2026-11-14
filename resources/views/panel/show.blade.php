@@ -13,6 +13,7 @@
   <dl class="kv">
     <div><dt>Solicitante</dt><dd>{{ $ticket->requester_name }}</dd></div>
     <div><dt>WhatsApp</dt><dd>{{ $ticket->requester_whatsapp }}</dd></div>
+    <div><dt>Departamento</dt><dd>{{ $ticket->department ?: '—' }}</dd></div>
     <div><dt>Servicio</dt><dd>{{ $ticket->category->name }}</dd></div>
     <div><dt>Asignado a</dt><dd>{{ $ticket->assignee?->name ?? 'Sin asignar' }}</dd></div>
     <div><dt>Apertura</dt><dd>{{ $ticket->opened_at->timezone($tz)->format('d/m/Y H:i') }}</dd></div>
