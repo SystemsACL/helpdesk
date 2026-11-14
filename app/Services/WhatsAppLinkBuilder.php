@@ -8,7 +8,7 @@ use App\Models\Ticket;
 class WhatsAppLinkBuilder
 {
     private const DEFAULTS = [
-        'new' => "Hola, soy {nombre}.\nRegistré una solicitud de soporte.\nFolio: {folio}\nServicio: {categoria}\nProblema: {descripcion}",
+        'new' => "Hola, soy {nombre}.\nRegistré una solicitud de soporte.\nFolio: {folio}\nServicio: {categoria}\nProblema: {descripcion}\nAbrir ticket: {enlace}",
         'status' => "Hola {nombre}, tu solicitud {folio} cambió de estado: {estado}.",
         'closed' => "Hola {nombre}, tu solicitud {folio} fue cerrada. Gracias por tu paciencia.",
     ];
@@ -36,7 +36,14 @@ class WhatsAppLinkBuilder
             '{categoria}' => $t->category?->name ?? '',
             '{estado}' => $t->status->label(),
             '{descripcion}' => str($t->description)->limit(300)->toString(),
+            '{enlace}' => $this->ticketUrl($t),
         ]);
+    }
+
+    /** Enlace al detalle del ticket en el panel (pide login si no hay sesión). Usa APP_URL. */
+    private function ticketUrl(Ticket $t): string
+    {
+        return rtrim((string) config('app.url'), '/') . route('tickets.show', $t, false);
     }
 
     private function url(?string $number, string $text): string

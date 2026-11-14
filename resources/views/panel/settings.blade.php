@@ -58,7 +58,7 @@
 
   <div class="card">
     <h2>Mensajes de WhatsApp</h2>
-    <p class="muted">Variables: {nombre} {folio} {categoria} {estado} {descripcion}. Si lo dejas vacío se usa el mensaje por defecto.</p>
+    <p class="muted">Variables: {nombre} {folio} {categoria} {estado} {descripcion} {enlace}. {enlace} abre el ticket en el panel (úsalo en el mensaje a la empresa). Si lo dejas vacío se usa el mensaje por defecto.</p>
     <label>Al registrar un ticket (solicitante → empresa)
       <textarea class="sm" name="msg_new">{{ old('msg_new', $s->msg_new) }}</textarea>
     </label>
