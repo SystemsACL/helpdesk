@@ -6,7 +6,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative --no-scripts --ignore-platform-reqs
 
 FROM php:8.4-fpm-alpine
-COPY --from=mlocati/docker-php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions pdo_pgsql pgsql opcache intl bcmath zip
 WORKDIR /var/www
 COPY --from=vendor /app /var/www
