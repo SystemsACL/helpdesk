@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: helpdesk-app
+    restart: always
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - storage_data:/var/www/storage
+    networks: [internal]
+
+  web:
+    image: nginx:1.27-alpine
+    container_name: helpdesk-web
+    restart: always
+    depends_on: [app]
+    ports:
+      - "127.0.0.1:8081:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/var/www/public:ro
+      - storage_data:/var/www/storage:ro
+    networks: [internal]
+
+  db:
+    image: postgres:16-alpine
+    container_name: helpdesk-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [internal]
+
+networks:
+  internal:
+
+volumes:
+  storage_data:
+  pgdata:
